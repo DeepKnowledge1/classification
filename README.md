@@ -1,4 +1,4 @@
-# Classification Demo
+# Classification
 
 ## classification Overview 
 A comprehensive machine learning classification demonstration using multiple algorithms on the Breast Cancer Wisconsin dataset.
