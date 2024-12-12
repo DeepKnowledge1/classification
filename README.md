@@ -13,8 +13,8 @@ A comprehensive machine learning classification demonstration using multiple alg
 pip install poetry
 
 # Clone the repository
-git clone https://github.com/yourusername/classification-demo.git
-cd classification-demo
+git clone https://github.com/yourusername/classification.git
+cd classification
 
 # Install dependencies
 poetry install
@@ -26,21 +26,18 @@ poetry install
 poetry shell
 
 # Run the main script
-poetry run classification-demo
+poetry run classification
 ```
 
 ## Project Structure
-- `src/`: Source code
+- `classification/`: Source code
 - `tests/`: Unit tests
 - `notebooks/`: Jupyter notebooks for interactive exploration
 
 
     
 ## Algorithms Demonstrated
-- Logistic Regression
-- Decision Tree
-- Random Forest
-- Support Vector Machine
+- lightgbm
 
 ## Learning Objectives
 - Understanding classification techniques
