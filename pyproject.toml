@@ -5,7 +5,7 @@ description = "A project for classification tasks"
 authors = ["Deep Knowledge <Deepp.Knowledge@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.11"
 paho-mqtt = "1.6.1"
 matplotlib = "3.8.3"
 numpy = "1.26.4"
