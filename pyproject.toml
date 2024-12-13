@@ -23,24 +23,7 @@ pandas = "^2.2.2"
 py-cpuinfo = "^9.0.0"
 thon = "^2.2"
 psutil = "^5.9.8"
-onnx = "1.14.1"
-onnxruntime-gpu = "1.14.1"
 
-#torch = { version = "1.13.1+cu117", source="torch"}
-#torchaudio = { version = "^0.13.1+cu117", source="torch"}
-#torchvision = { version = "0.14.1+cu117", source="torch"}
-
-
-opencv-python = [
-    { version = "^4.6.0", markers = "sys_platform == 'win32'"},
-    { version = "4.10.0.82", markers = "sys_platform == 'linux'" }
-]
-
-
-[[tool.poetry.source]]
-name = "torch"
-url = "https://download.pytorch.org/whl/cu117"
-priority = "supplemental"
 
 
 [build-system]
