@@ -2,6 +2,7 @@ import pytest
 import numpy as np
 import lightgbm
 from sklearn.metrics import accuracy_score, roc_auc_score
+from classification.classifier import ClassificationDemo
 
 def test_class_initialization():
     """
