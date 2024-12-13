@@ -3,29 +3,46 @@ name = "classification"
 version = "0.1.0"
 description = "classification"
 authors = ["Deep Knowledge <Deepp.Knowledge@gmail.com>"]
-
 [tool.poetry.dependencies]
 python = "^3.9"
-numpy = "*"  # First version fully supporting Python 3.9
-pandas = "*"  # Compatible with Python 3.9
-scikit-learn = "*"  # Compatible with Python 3.9
-lightgbm = "*"  # Compatible with Python 3.9
-joblib = "*"  # Compatible with Python 3.9
-matplotlib = "*"  # Updated version for Python 3.9
-pytest = "*"  # Compatible with Python 3.9
-inference-schema ="*"
+paho-mqtt = "1.6.1"
+matplotlib = "3.8.3"
+numpy = "1.26.4"
+pytest = "8.0.2"
+black = "24.2.0"
+flake8 = "7.0.0"
+pre-commit = "3.6.2"
+tox = "4.13.0"
+gitpython = "3.1.42"
+albumentations = "1.4.0"
+pycocotools = "2.0.7"
+ipython = "8.18.1"
+openvino-dev = "2023.0"
+easydict = "1.12"
+pandas = "^2.2.2"
+py-cpuinfo = "^9.0.0"
+thon = "^2.2"
+psutil = "^5.9.8"
+onnx = "1.14.1"
+onnxruntime-gpu = "1.14.1"
 
-[tool.poetry.group.azure.dependencies]
-azure-ai-ml = "*"  # Compatible with Python 3.9
-azure-identity = "*"  # Compatible with Python 3.9
-azure-storage-blob = "*"  # Compatible with Python 3.9
-azureml-core = "*"  # Compatible with Python 3.9
-azureml-mlflow = "*"  # Compatible with Python 3.9
+#torch = { version = "1.13.1+cu117", source="torch"}
+#torchaudio = { version = "^0.13.1+cu117", source="torch"}
+#torchvision = { version = "0.14.1+cu117", source="torch"}
+
+
+opencv-python = [
+    { version = "^4.6.0", markers = "sys_platform == 'win32'"},
+    { version = "4.10.0.82", markers = "sys_platform == 'linux'" }
+]
+
+
+[[tool.poetry.source]]
+name = "torch"
+url = "https://download.pytorch.org/whl/cu117"
+priority = "supplemental"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.extras]
-azure = ["azure-ai-ml", "azure-identity", "azure-storage-blob", "inference-schema", "azureml-core", "azureml-mlflow"]
