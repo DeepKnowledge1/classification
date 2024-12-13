@@ -6,21 +6,21 @@ authors = ["Deep Knowledge <Deepp.Knowledge@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-numpy = "1.20.3"  # First version fully supporting Python 3.9
-pandas = "1.3.5"  # Compatible with Python 3.9
-scikit-learn = "1.0.2"  # Compatible with Python 3.9
-lightgbm = "3.3.5"  # Compatible with Python 3.9
-joblib = "1.1.1"  # Compatible with Python 3.9
-matplotlib = "3.5.1"  # Updated version for Python 3.9
-pytest = "7.2.2"  # Compatible with Python 3.9
-inference-schema = {version = "1.5.1", markers = "python_version >= '3.9' and python_version < '3.11'"}
+numpy = "*"  # First version fully supporting Python 3.9
+pandas = "*"  # Compatible with Python 3.9
+scikit-learn = "*"  # Compatible with Python 3.9
+lightgbm = "*"  # Compatible with Python 3.9
+joblib = "*"  # Compatible with Python 3.9
+matplotlib = "*"  # Updated version for Python 3.9
+pytest = "*"  # Compatible with Python 3.9
+inference-schema ="*"
 
 [tool.poetry.group.azure.dependencies]
-azure-ai-ml = "1.15.0"  # Compatible with Python 3.9
-azure-identity = "1.12.0"  # Compatible with Python 3.9
-azure-storage-blob = "12.13.0"  # Compatible with Python 3.9
-azureml-core = "1.48.0"  # Compatible with Python 3.9
-azureml-mlflow = "1.48.0"  # Compatible with Python 3.9
+azure-ai-ml = "*"  # Compatible with Python 3.9
+azure-identity = "*"  # Compatible with Python 3.9
+azure-storage-blob = "*"  # Compatible with Python 3.9
+azureml-core = "*"  # Compatible with Python 3.9
+azureml-mlflow = "*"  # Compatible with Python 3.9
 
 
 [build-system]
