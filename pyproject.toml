@@ -27,6 +27,7 @@ psutil = "^5.9.8"
 onnx = "1.14.1"
 onnxruntime-gpu = "1.14.1"
 
+scipy="1.9.1"
 torch = { version = "1.13.1+cu117", source="torch"}
 torchaudio = { version = "^0.13.1+cu117", source="torch"}
 torchvision = { version = "0.14.1+cu117", source="torch"}
