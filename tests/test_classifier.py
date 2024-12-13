@@ -1,5 +1,5 @@
 import unittest
-from classification_demo.classifier import Classifier
+from classification.classifier import ClassificationDemo
 
 class TestClassifier(unittest.TestCase):
     def test_classify(self):
