@@ -19,6 +19,7 @@ azure-storage-blob = "12.13.0"
 inference-schema = "1.5.1"
 azureml-core = "1.48.0"
 azureml-mlflow = "1.48.0"
+scipy = "1.9.3"  
 
 [tool.poetry.extras]
 azure = [
