@@ -12,7 +12,9 @@ joblib = "*"
 matplotlib = "3.8.3"
 #scikit-learn = "*"
 lightgbm = "*"
-
+pytest = "8.0.2"
+black = "24.2.0"
+flake8 = "7.0.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
