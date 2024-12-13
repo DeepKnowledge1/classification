@@ -1,12 +1,6 @@
-[tool.poetry]
-name = "classification"
-version = "0.1.0"
-description = "classification"
-authors = ["Deep Knowledge <Deepp.Knowledge@gmail.com>"]
-
 [tool.poetry.dependencies]
 python = ">=3.9,<3.11"
-numpy = "1.20.3"
+numpy = ">=1.21.0"  # Updated to meet pandas requirements
 pandas = "1.3.5"
 scikit-learn = "1.0.2"
 lightgbm = "3.3.5"
