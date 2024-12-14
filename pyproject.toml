@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "classification"
 version = "0.1.6"
-description = "classification"
+description = "classification using Light GBM alrogithm"
 authors = ["Deep Knowledge <Deepp.Knowledge@gmail.com>"]
 
 [tool.poetry.dependencies]
