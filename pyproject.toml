@@ -15,6 +15,7 @@ lightgbm = "*"
 pytest = "8.3.4"
 black = "24.2.0"
 flake8 = "7.0.0"
+pre-commit = "^4.0.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
