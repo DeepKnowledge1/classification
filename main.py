@@ -17,4 +17,4 @@ def main():
 if __name__ == '__main__':
     main()
     # modifying the brach
-    print("complete")
+    print("The project is completed")
