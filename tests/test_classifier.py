@@ -23,8 +23,8 @@ def test_training_and_evaluation():
     assert results['Accuracy'] > 0.5, "Accuracy should be greater than 0.5"
     assert 0 <= results['ROC AUC'] <= 1, "ROC AUC should be between 0 and 1"
 
-if __name__ == '__main__':
-    test_training_and_evaluation()
+# if __name__ == '__main__':
+#     test_training_and_evaluation()
 
 # @pytest.fixture
 # def classification_demo():
