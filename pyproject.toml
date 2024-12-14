@@ -4,7 +4,6 @@ version = "0.1.6"
 description = "classification"
 authors = ["Deep Knowledge <Deepp.Knowledge@gmail.com>"]
 
-
 [tool.poetry.dependencies]
 python = "^3.11"
 numpy = "*"
