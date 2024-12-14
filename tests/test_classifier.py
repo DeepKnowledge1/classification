@@ -3,6 +3,9 @@
 # from sklearn.metrics import accuracy_score, roc_auc_score
 # from classification.classifier import ClassificationDemo
 
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.datasets import load_breast_cancer
 
 import pytest
 from classification.classifier import ClassificationDemo
