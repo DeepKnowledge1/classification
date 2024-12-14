@@ -12,7 +12,7 @@ joblib = "*"
 matplotlib = "3.8.3"
 #scikit-learn = "*"
 lightgbm = "*"
-pytest = "8.0.2"
+pytest = "8.3.4"
 black = "24.2.0"
 flake8 = "7.0.0"
 [build-system]
