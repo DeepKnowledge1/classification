@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "classification"
-version = "0.1.5"
+version = "0.1.6"
 description = "classification"
 authors = ["Deep Knowledge <Deepp.Knowledge@gmail.com>"]
 

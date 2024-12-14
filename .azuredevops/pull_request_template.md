@@ -3,7 +3,6 @@
 
 Please include a summary of PR (what functionality you have automated).
 Please add the Ticket Id
-
 ## ✨What type of PR is this? (check all applicable)
 
 - [ ] 🐞 Bug fix (non-breaking change which fixes an issue)
