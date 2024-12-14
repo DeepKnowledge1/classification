@@ -5,7 +5,7 @@
 
 
 import pytest
-from classification.classifie import ClassificationDemo
+from classification.classifier import ClassificationDemo
 
 
 def test_training_and_evaluation():
