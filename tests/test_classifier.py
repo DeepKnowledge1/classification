@@ -36,8 +36,3 @@ def divide(a, b):
 def test_divide_by_zero():
     with pytest.raises(ValueError, match="Cannot divide by zero"):
         divide(10, 0)
-
-
-def test_divide_by_():
-    with pytest.raises(ValueError, match="Cannot divide by zero"):
-        divide(10, 0)
