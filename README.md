@@ -1,6 +1,6 @@
 # Classification
 
-## Overview 
+## Overview
 A comprehensive machine learning classification demonstration using multiple algorithms on the Breast Cancer Wisconsin dataset.
 
 ## Prerequisites
@@ -38,7 +38,7 @@ poetry run classification
 - `notebooks/`: Jupyter notebooks for interactive exploration
 
 
-    
+
 ## Algorithms Demonstrated
 - lightgbm
 

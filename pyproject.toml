@@ -1,9 +1,8 @@
 [tool.poetry]
 name = "classification"
-version = "0.1.0"
-description = "classification"
+version = "0.1.6"
+description = "classification using Light GBM alrogithm"
 authors = ["Deep Knowledge <Deepp.Knowledge@gmail.com>"]
-
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -16,6 +15,7 @@ lightgbm = "*"
 pytest = "8.3.4"
 black = "24.2.0"
 flake8 = "7.0.0"
+pre-commit = "^4.0.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
