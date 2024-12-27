@@ -1,0 +1,216 @@
+# Variable 'CLUSTER_MAX_INSTANCES' was defined in the Variables tab
+# Variable 'CLUSTER_MINI_INSTANCES' was defined in the Variables tab
+# Variable 'CLUSTER_NAME' was defined in the Variables tab
+# Variable 'CLUSTER_SIZE' was defined in the Variables tab
+# Variable 'COMPUTE_NAME' was defined in the Variables tab
+# Variable 'COMPUTE_SIZE' was defined in the Variables tab
+# Variable 'CONTAINER_NAME' was defined in the Variables tab
+# Variable 'DATA_ASSETS_NAME' was defined in the Variables tab
+# Variable 'DATA_STORE' was defined in the Variables tab
+# Variable 'EXPIREMENT_NAME' was defined in the Variables tab
+# Variable 'LOCATION' was defined in the Variables tab
+# Variable 'ML_WORKSPACE' was defined in the Variables tab
+# Variable 'RESOURCE_GROUP' was defined in the Variables tab
+# Variable 'STORAGE_NAME' was defined in the Variables tab
+# Variable 'VM_NAME' was defined in the Variables tab
+jobs:
+- job: Job_1
+  displayName: Azure ML CLI
+  pool:
+    name: pool_acer
+  steps:
+  - checkout: self
+    fetchDepth: 1
+  - task: AzureCLI@2
+    displayName: Install ML Extension
+    inputs:
+      connectedServiceNameARM: 9bc537d4-5b72-419d-926d-21b74e1e986d
+      scriptType: ps
+      scriptLocation: inlineScript
+      inlineScript: >-
+        # Install the ML extension to enable machine learning commands
+
+
+        az extension add --name ml
+  - task: AzureCLI@2
+    displayName: Create Azure Resource Group
+    inputs:
+      connectedServiceNameARM: 9bc537d4-5b72-419d-926d-21b74e1e986d
+      scriptType: ps
+      scriptLocation: inlineScript
+      inlineScript: >
+        # Create a resource group to organize Azure resources
+
+
+        az group create `
+          --name $(RESOURCE_GROUP) `
+          --location $(LOCATION)
+  - task: AzureCLI@2
+    displayName: Create Azure ML Workspace
+    inputs:
+      connectedServiceNameARM: 9bc537d4-5b72-419d-926d-21b74e1e986d
+      scriptType: ps
+      scriptLocation: inlineScript
+      inlineScript: >
+        # Create an Azure Machine Learning workspace
+
+        az ml workspace create `
+          --name $(ML_WORKSPACE) `
+          --resource-group $(RESOURCE_GROUP) `
+          --location $(LOCATION)
+  - task: AzureCLI@2
+    displayName: Create Compute Cluster for Workspace
+    inputs:
+      connectedServiceNameARM: 9bc537d4-5b72-419d-926d-21b74e1e986d
+      scriptType: ps
+      scriptLocation: inlineScript
+      inlineScript: >
+        # Create the compute cluster
+
+
+        az ml compute create `
+          --resource-group $(RESOURCE_GROUP) `
+          --workspace-name $(ML_WORKSPACE) `
+          --name $(CLUSTER_NAME) `
+          --type AmlCompute `
+          --size $(CLUSTER_SIZE) `
+          --min-instances $(CLUSTER_MINI_INSTANCES) `
+          --max-instances $(CLUSTER_MAX_INSTANCES)
+  - task: AzureCLI@2
+    displayName: Create Storage Account
+    inputs:
+      connectedServiceNameARM: 9bc537d4-5b72-419d-926d-21b74e1e986d
+      scriptType: ps
+      scriptLocation: inlineScript
+      inlineScript: >-
+        # Create a storage account to store data and logs
+
+
+        az storage account create `
+          --name $(STORAGE_NAME) `
+          --resource-group $(RESOURCE_GROUP) `
+          --location $(LOCATION) `
+          --sku Standard_LRS `
+          --kind BlobStorage `
+          --access-tier Hot
+  - task: AzureCLI@2
+    displayName: Create Storage Container
+    inputs:
+      connectedServiceNameARM: 9bc537d4-5b72-419d-926d-21b74e1e986d
+      scriptType: ps
+      scriptLocation: inlineScript
+      inlineScript: >
+        # Fetch the storage account key
+
+        $STORAGE_ACCOUNT_KEY = az storage account keys list `
+          --resource-group "$(RESOURCE_GROUP)" `
+          --account-name "$(STORAGE_NAME)" `
+          --query "[0].value" `
+          -o tsv
+
+        # Ensure variable fetched correctly
+
+        if (-not $STORAGE_ACCOUNT_KEY) {
+            throw "Failed to fetch the storage account key."
+        }
+
+
+        # Create container
+
+        az storage container create `
+          --account-name "$(STORAGE_NAME)" `
+          --name "$(CONTAINER_NAME)" `
+          --account-key $STORAGE_ACCOUNT_KEY `
+          --public-access off
+
+        # Upload the file
+
+        $localFilePath = "./data/insurance.csv"  # Replace with the correct file path
+
+        $blobName = "data/insurance.csv"
+
+
+        az storage blob upload `
+          --account-name "$(STORAGE_NAME)" `
+          --container-name "$(CONTAINER_NAME)" `
+          --file $localFilePath `
+          --name $blobName `
+          --account-key $STORAGE_ACCOUNT_KEY `
+          --overwrite
+  - task: AzureCLI@2
+    displayName: 'Create Data Store '
+    inputs:
+      connectedServiceNameARM: 9bc537d4-5b72-419d-926d-21b74e1e986d
+      scriptType: ps
+      scriptLocation: inlineScript
+      inlineScript: "# Fetch the storage account key\n$STORAGE_ACCOUNT_KEY = az storage account keys list `\n    --resource-group $(RESOURCE_GROUP) `\n    --account-name $(STORAGE_NAME) `\n    --query \"[0].value\" `\n    -o tsv\n\n# Define variables\n$storageAccountName = \"$(STORAGE_NAME)\" \n$containerName = \"$(CONTAINER_NAME)\"  \n$localFilePath = \"./data/insurance.csv\"\n$blobName = \"data/insurance.csv\"\n\n\n## updatring YML\n$yamlFilePath = \"./training/datastore-blob.yml\"\n$yamlContent = Get-Content $yamlFilePath -Raw\n# Define the new compute value\n$newaccount_key= $STORAGE_ACCOUNT_KEY\n\n$updatedYamlContent = $yamlContent -replace \"(?<=^account_key:\\s).*\", $newaccount_key\n\n# Write the updated content back to the file\nSet-Content -Path $yamlFilePath -Value $updatedYamlContent -Force\n\n\n# Create the datastore using the generated YAML file\naz ml datastore create `\n    --file $updatedYamlContent `\n    --resource-group $(RESOURCE_GROUP) `\n    --workspace-name $(ML_WORKSPACE)\n\n# Upload the file to the container (with overwrite option)\naz storage blob upload `\n    --account-name $storageAccountName `\n    --container-name $containerName `\n    --file $localFilePath `\n    --name $blobName `\n    --account-key $STORAGE_ACCOUNT_KEY `\n    --overwrite\n"
+  - task: AzureCLI@2
+    displayName: Create ML Data Asset
+    inputs:
+      connectedServiceNameARM: 9bc537d4-5b72-419d-926d-21b74e1e986d
+      scriptType: ps
+      scriptLocation: inlineScript
+      inlineScript: "# Output Resource Group and Workspace details\nWrite-Host \"Resource Group: $(RESOURCE_GROUP)\" \nWrite-Host \"Workspace Name: $(ML_WORKSPACE)\" \n\n$RG = \"$(RESOURCE_GROUP)\"  # Enclose the variable value in quotes \n$WS = \"$(ML_WORKSPACE)\"    # Enclose the variable value in quotes \n$DS= \"$(DATA_STORE)\"  # Enclose the variable value in quotes \n\n# Initialize version\n$NewVersion = 1\n\n# Try to get existing data asset versions\ntry {\n    # List all versions of the data asset\n    $DataAssetVersions = az ml data list `\n        --name $(DATA_ASSETS_NAME) `\n        --resource-group $RG `\n        --workspace-name $WS `\n        --query \"[].version\" `\n        -o tsv\n\n    # If versions exist, find the maximum and increment\n    if ($DataAssetVersions) {\n        $MaxVersion = ($DataAssetVersions | Measure-Object -Maximum).Maximum\n        $NewVersion = $MaxVersion + 1\n    }\n\n    Write-Host \"**************************** NewVersion: $NewVersion\" \n}\ncatch {\n    Write-Host \"Could not retrieve existing data asset versions. Starting with version 1.\"\n}\n\n# Update YML file path\n$yamlFilePath = \"./training/data-asset.yml\" \n$yamlContent = Get-Content $yamlFilePath -Raw \n\n# Update version in YAML\n$UpdatedYamlContent = $yamlContent -replace \"version: \\d+\", \"version: $NewVersion\"\n$UpdatedYamlContent = $UpdatedYamlContent -replace \"path: .*\", \"path: azureml://datastores/$DS/paths/data/insurance.csv\"\n\n# Write the updated content back to the file\nSet-Content -Path $yamlFilePath -Value $UpdatedYamlContent -Force\n\nWrite-Host \"-------------------------------------- Datastore: $(DATA_STORE)\"\nWrite-Host \"-------------------------------------- Updated YAML Content:\"\nWrite-Host $UpdatedYamlContent\n\n# Validate file existence\nif (!(Test-Path $yamlFilePath)) {\n    Write-Host \"Error: YAML file not found at $yamlFilePath\"\n    exit 1\n}\n\n# Create data asset using updated YAML file\ntry {\n    az ml data create `\n        --file $yamlFilePath `\n        --resource-group $RG `\n        --workspace-name $WS `\n}\ncatch {\n    Write-Host \"Failed to create data asset.\"\n    Write-Host $_\n    exit 1\n}\n\nWrite-Host \"Data asset created successfully!\"\n"
+  - task: AzureCLI@2
+    displayName: Create ML Job - classification
+    inputs:
+      connectedServiceNameARM: 9bc537d4-5b72-419d-926d-21b74e1e986d
+      scriptType: ps
+      scriptLocation: inlineScript
+      inlineScript: >+
+        # updatring YML
+
+
+        $yamlFilePath = "./training/job.yml"
+
+        $yamlContent = Get-Content $yamlFilePath -Raw
+
+        # Define the new compute value
+
+        $newacompute= "$(CLUSTER_NAME)"
+
+
+        $updatedYamlContent = $yamlContent -replace "(?<=^compute:\s).*", $newacompute
+
+
+        # Write the updated content back to the file
+
+        Set-Content -Path $yamlFilePath -Value $updatedYamlContent -Force
+
+
+
+        az ml job create `
+            --file "./training/job.yml" `
+            --resource-group $(RESOURCE_GROUP) `
+            --workspace-name $(ML_WORKSPACE)
+
+
+
+  - task: Bash@3
+    displayName: Create model & metadata dirs
+    enabled: False
+    inputs:
+      targetType: inline
+      script: "mkdir metdata \nmkdir models"
+  - task: AzureCLI@2
+    displayName: 'Azure run training script CLI '
+    enabled: False
+    inputs:
+      connectedServiceNameARM: 9bc537d4-5b72-419d-926d-21b74e1e986d
+      scriptType: ps
+      scriptLocation: inlineScript
+      inlineScript: >-
+        # Submit a training script to Azure ML for execution
+
+
+        az ml run submit-script `
+            --workspace-name $(ML_WORKSPACE) `
+            --resource-group $(RESOURCE_GROUP) `
+            --experiment-name "$(experiment.name)" `
+            --target "$(COMPUTE_NAME)" `
+            --conda-dependencies "conda_dependencies.yml" `
+            --run-configuration-name "train_insurance" `
+            --output-metadata-file "./metadata/run.json" `
+            train_aml.py
+      cwd: training
+...

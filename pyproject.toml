@@ -16,6 +16,13 @@ pytest = "8.3.4"
 black = "24.2.0"
 flake8 = "7.0.0"
 pre-commit = "^4.0.1"
+azure-ai-ml = "^1.23.0"
+azure-identity = "^1.19.0"
+azure-mgmt-resource = "^23.2.0"
+azure-storage-blob = "^12.24.0"
+azure-mgmt-storage = "^21.2.1"
+
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
