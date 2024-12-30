@@ -92,4 +92,4 @@ if __name__ == "__main__":
 #   --datastore-name "datastorepy01" `
 #   --storage-account-name "azstorageblobci03" `
 #   --container-name "containerpipline03" `
-#   --storage-account-key "I5mdmIQyMmMviahbQ7Qv0DQZ8kRfouMh/os1m5ChkoNJ07tv+JK08AkSzwmbn8V9ARPwKiZ7JE6p+AStXD5hRA=="
+#   --storage-account-key "account-key"
