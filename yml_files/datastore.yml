@@ -1,0 +1,7 @@
+$schema: https://azuremlschemas.azureedge.net/latest/datastore.schema.json
+name: datastorefruits
+type: azure_blob
+account_name: azstorageblobci03
+container_name: containerpipline03
+credentials:
+  account_key: I5mdmIoNJ07tv+JK08AkSzwmbn8V9ARPwKiZ7JE6p+AStXD5hRA==
