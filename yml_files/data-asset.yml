@@ -1,6 +1,6 @@
 $schema: https://azuremlschemas.azureedge.net/latest/data.schema.json
 name: fruits_data_asset
-version: 3
+version: 6
 type: uri_file
 path: azureml://datastores/datastorefruits/paths/data/Date_Fruit_Datasets.csv
 description: "fruits_data_asset data for training"
