@@ -1,11 +1,11 @@
 training:
   learning_rate: 0.02
   boosting_type: gbdt
-  objective: binary
-  metric:
-    - auc
-    - cross_entropy
-
+  # objective: binary
+  objective: multiclass
+  metric: multi_logloss
+  num_class: 7
+  # metric: auc
   sub_feature: 0.7
   feature_fraction: 0.9
   num_leaves: 60

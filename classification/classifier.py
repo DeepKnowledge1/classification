@@ -32,9 +32,14 @@ class DataSplitter:
             Tuple[lightgbm.Dataset, lightgbm.Dataset]: Training and validation datasets for LightGBM.
         """
         try:
+
+            # features = data_df.drop(['target', 'id'], axis=1)
+            # labels = np.array(data_df['target'])
+
             features = data_df.drop(["Class"], axis=1)
             labels = np.array(data_df["Class"])
             labels, unique_labels = pd.factorize(labels)
+
             (
                 features_train,
                 features_valid,
@@ -46,7 +51,7 @@ class DataSplitter:
                 features_valid, label=labels_valid, free_raw_data=False
             )
             logging.info("Data split successfully into training and validation sets.")
-            return train_data, valid_data
+            return train_data, valid_data, unique_labels
         except Exception as e:
             logging.error(f"Error in data splitting: {e}")
             raise
@@ -73,7 +78,7 @@ class ModelTrainer:
             lightgbm.Booster: The trained LightGBM model.
         """
         try:
-            train_data, valid_data = data
+            train_data, valid_data, _ = data
             model = lightgbm.train(
                 self.parameters,
                 train_data,
@@ -92,53 +97,59 @@ class ModelTrainer:
         model: lightgbm.Booster, data: Tuple[lightgbm.Dataset, lightgbm.Dataset]
     ) -> Dict[str, float]:
         """
-        Evaluate metrics for the trained model, supporting both binary and multi-class classification.
+        Evaluate metrics for the trained model, including accuracy and AUC.
+        Supports both binary and multi-class classification.
 
         Args:
             model (lightgbm.Booster): The trained LightGBM model.
             data (Tuple[lightgbm.Dataset, lightgbm.Dataset]): Training and validation datasets.
 
         Returns:
-            Dict[str, float]: A dictionary containing AUC metrics for each class (for multi-class)
-                            or a single AUC score (for binary classification).
+            Dict[str, float]: A dictionary containing accuracy and AUC metrics.
         """
         try:
             # Get predictions and true labels
-            predictions = model.predict(data[1].data)
-            true_labels = pd.factorize(data[1].label)[0]
+
+            predictions_proba = model.predict(data[1].data)
+            true_labels = data[1].label
+            unique_labels = data[2]
+            # Determine predicted classes
+            if predictions_proba.ndim == 1:
+                # Binary classification
+                predicted_classes = (predictions_proba >= 0.5).astype(int)
+            else:
+                # Multi-class classification
+                predicted_classes = np.argmax(predictions_proba, axis=1)
+
+            # Calculate accuracy
+            accuracy = metrics.accuracy_score(true_labels, predicted_classes)
 
             # Get number of unique classes
             num_classes = len(np.unique(true_labels))
-
-            model_metrics = {}
+            model_metrics = {"accuracy": accuracy}
 
             if num_classes == 2:
                 # Binary classification case
-                fpr, tpr, thresholds = metrics.roc_curve(true_labels, predictions)
+                fpr, tpr, thresholds = metrics.roc_curve(true_labels, predictions_proba)
                 auc_score = metrics.auc(fpr, tpr)
                 model_metrics["auc"] = auc_score
             else:
                 # Multi-class case
-                # Convert labels to binary format
                 binary_labels = label_binarize(true_labels, classes=range(num_classes))
 
                 # Calculate AUC for each class
                 for i in range(num_classes):
-                    if predictions.ndim == 1:
-                        # Handle case where model outputs single column of predictions
-                        class_predictions = (predictions == i).astype(float)
-                    else:
-                        # Handle case where model outputs probability for each class
-                        class_predictions = predictions[:, i]
-
+                    class_predictions = predictions_proba[:, i]  # Fixed for multi-class
                     fpr, tpr, _ = metrics.roc_curve(
                         binary_labels[:, i], class_predictions
                     )
                     auc_score = metrics.auc(fpr, tpr)
-                    model_metrics[f"auc_class_{i}"] = auc_score
+                    model_metrics[f"auc_class_{unique_labels[i]}"] = auc_score
 
                 # Calculate macro-average AUC
-                model_metrics["auc_macro"] = np.mean(list(model_metrics.values()))
+                model_metrics["auc_macro"] = np.mean(
+                    [v for k, v in model_metrics.items() if "auc_class_" in k]
+                )
 
             logging.info(f"Model metrics: {model_metrics}")
             return model_metrics

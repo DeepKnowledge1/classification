@@ -64,16 +64,6 @@ class TrainingPipeline:
         splitter = DataSplitter()
         data = splitter.split(df)
 
-        # Define LightGBM parameters
-        params = {
-            "objective": "binary",
-            "metric": "binary_logloss",
-            "boosting_type": "gbdt",
-            "num_leaves": 31,
-            "learning_rate": 0.05,
-            "feature_fraction": 0.9,
-        }
-
         # Train model
         trainer = ModelTrainer(parameters=self.parameters)
         model = trainer.train(data)
