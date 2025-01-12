@@ -1,0 +1,30 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+type: command
+command: >
+  python main.py
+  --input_data ${{inputs.input_data}}
+  --output_dir ${{outputs.output_dir}}
+
+inputs:
+  input_data:
+    type: uri_file
+    path: azureml:fruits_data_asset:1  # Name and version of the data asset
+
+outputs:
+  output_dir:
+    type: uri_folder
+
+environment:
+  name: lightgbm-3.3  # Replace with the exact environment name
+  version: 53         # Specify the version of the environment
+
+# environment:
+#   name: training-environment
+#   conda_file: ./conda_dependencies.yml
+#   image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04
+
+compute: compute-cluster-cli01
+
+code: ./
+description: Train a model using insurance data
+experiment_name: insurance_training_experiment

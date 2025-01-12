@@ -1,0 +1,14 @@
+training:
+  learning_rate: 0.02
+  boosting_type: gbdt
+  objective: binary
+  metric:
+    - auc
+    - cross_entropy
+
+  sub_feature: 0.7
+  feature_fraction: 0.9
+  num_leaves: 60
+  min_data: 100
+  min_hessian: 1
+  verbose: 0
