@@ -14,9 +14,8 @@ outputs:
   output_dir:
     type: uri_folder
 
-environment:
-  name: lightgbm-3.3  # Replace with the exact environment name
-  version: 53         # Specify the version of the environment
+environment: azureml://registries/azureml/environments/lightgbm-3.3/versions/53  # Using the curated environment from the registry
+
 
 # environment:
 #   name: training-environment
@@ -25,6 +24,6 @@ environment:
 
 compute: compute-cluster-cli01
 
-code: ./
-description: Train a model using insurance data
-experiment_name: insurance_training_experiment
+code: ../
+description: Train a model using fruits data
+experiment_name: fruits_training_experiment

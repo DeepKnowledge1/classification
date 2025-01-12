@@ -118,3 +118,18 @@ if __name__ == "__main__":
         output_dir=args.output_dir,
     )
     pipeline.run()
+
+
+# az ml job download `
+#     --name careful_soccer_yhtl74zs7q `
+#     --resource-group rg_demo03 `
+#     --workspace-name ws_demo_pipeline03 `
+#     --output-name output_dir `
+#     --download-path ./local-output `
+
+
+# az ml job create `
+#    --file "./yml_files/job.yaml" `
+#    --resource-group "rg_demo03" `
+#    --workspace-name "ws_demo_pipeline03" `
+#    --set outputs.output_dir.path="./results"
