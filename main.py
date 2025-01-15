@@ -5,6 +5,8 @@ import yaml
 import logging
 import pandas as pd
 import joblib
+import mlflow
+import mlflow.sklearn
 from classification.classifier import DataSplitter, ModelTrainer
 from typing import Dict
 
@@ -16,7 +18,7 @@ logging.basicConfig(
 
 class TrainingPipeline:
     """
-    A class to handle the entire training pipeline.
+    A class to handle the entire training pipeline with MLflow integration.
     """
 
     def __init__(
@@ -24,23 +26,24 @@ class TrainingPipeline:
         input_data: str,
         model_name: str,
         output_dir: str,
+        model_output: str,
         parameters_file: str = "yml_files/algo_parms.yaml",
     ):
         self.input_data = input_data
         self.model_name = model_name
         self.output_dir = output_dir
+        self.model_output = model_output
         self.parameters_file = parameters_file
         self.parameters = self._load_parameters()
 
     def _load_parameters(self) -> Dict:
         """
-        Load training parameters from a JSON file.
+        Load training parameters from a YAML file.
 
         Returns:
             Dict: Training parameters dictionary.
         """
         try:
-            # Single-line safe yaml loading
             with open(self.parameters_file, errors="ignore") as f:
                 return yaml.safe_load(f)["training"]
 
@@ -60,23 +63,41 @@ class TrainingPipeline:
             logging.error(f"Error reading input data: {e}")
             return
 
-        # Split data
-        splitter = DataSplitter()
-        data = splitter.split(df)
+        # Start MLflow run
+        with mlflow.start_run():
+            # Log parameters
+            mlflow.log_params(self.parameters)
 
-        # Train model
-        trainer = ModelTrainer(parameters=self.parameters)
-        model = trainer.train(data)
+            # Split data
+            splitter = DataSplitter()
+            data = splitter.split(df)
 
-        # Evaluate metrics
-        metrics = trainer.evaluate(model, data)
+            # Train model
+            trainer = ModelTrainer(parameters=self.parameters)
+            model = trainer.train(data)
 
-        # Save outputs
-        self._save_outputs(model, metrics)
+            # Evaluate metrics
+            metrics = trainer.evaluate(model, data)
+            logging.info(f"Model metrics: {metrics}")
+
+            # Log metrics to MLflow
+            mlflow.log_metrics(metrics)
+
+            # Log model to MLflow
+            mlflow.sklearn.log_model(
+                sk_model=model,
+                artifact_path=self.output_dir,  # Dynamic path injected by Azure ML
+                registered_model_name=self.model_name,
+            )
+
+            logging.info(f"Model output path: {args.model_output}")
+
+            # Save outputs
+            # self._save_outputs(model, metrics)
 
     def _save_outputs(self, model, metrics):
         """
-        Save the trained model and evaluation metrics.
+        Save the trained model and evaluation metrics locally.
 
         Args:
             model: The trained model.
@@ -84,14 +105,17 @@ class TrainingPipeline:
         """
         try:
             os.makedirs(self.output_dir, exist_ok=True)
+
+            # Save model locally
             model_path = os.path.join(self.output_dir, self.model_name)
             joblib.dump(model, model_path)
-            logging.info(f"Model saved to {model_path}")
+            logging.info(f"Model saved locally to {model_path}")
 
+            # Save metrics locally
             metrics_path = os.path.join(self.output_dir, "metrics.json")
             with open(metrics_path, "w") as f:
                 json.dump(metrics, f)
-            logging.info(f"Metrics saved to {metrics_path}")
+            logging.info(f"Metrics saved locally to {metrics_path}")
         except Exception as e:
             logging.error(f"Error saving outputs: {e}")
 
@@ -105,31 +129,24 @@ if __name__ == "__main__":
         help="Input data path provided by Azure ML",
     )
     parser.add_argument(
-        "--model_name", type=str, default="Fruit_model.pkl", help="Name of the Model"
+        "--model_name", type=str, default="Fruit_model", help="Name of the Model"
     )
     parser.add_argument(
-        "--output_dir", type=str, default="outputs", help="Directory to save outputs"
+        "--output_dir", type=str, default="results", help="Directory to save outputs"
     )
+    parser.add_argument(
+        "--model_output",
+        type=str,
+        default="models/Fruit_model",
+        help="MLflow model output directory",
+    )
+
     args, _ = parser.parse_known_args()
 
     pipeline = TrainingPipeline(
         input_data=args.input_data,
         model_name=args.model_name,
         output_dir=args.output_dir,
+        model_output=args.model_output,
     )
     pipeline.run()
-
-
-# az ml job download `
-#     --name careful_soccer_yhtl74zs7q `
-#     --resource-group rg_demo03 `
-#     --workspace-name ws_demo_pipeline03 `
-#     --output-name output_dir `
-#     --download-path ./local-output `
-
-
-# az ml job create `
-#    --file "./yml_files/job.yaml" `
-#    --resource-group "rg_demo03" `
-#    --workspace-name "ws_demo_pipeline03" `
-#    --set outputs.output_dir.path="./results"

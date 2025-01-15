@@ -1,29 +1,32 @@
+
 $schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
 type: command
 command: >
   python main.py
   --input_data ${{inputs.input_data}}
-  --output_dir ${{outputs.output_dir}}
+  --model_name "Fruit_FINAL_model"
+  --output_dir "./outputs"
+  --model_output ${{outputs.model_output}}
 
 inputs:
   input_data:
     type: uri_file
-    path: azureml:fruits_data_asset:1  # Name and version of the data asset
+    path: azureml:fruits_data_asset:1  # Ensure this is your actual data asset name
 
 outputs:
-  output_dir:
+  model_output:
     type: uri_folder
+    path: azureml://datastores/datastorefruits/paths/models/Fruit_model/
 
-environment: azureml://registries/azureml/environments/lightgbm-3.3/versions/53  # Using the curated environment from the registry
+environment: azureml://registries/azureml/environments/lightgbm-3.3/versions/53  # Using a curated environment
+compute: compute-cluster-cli01
+code: ../
+description: Train a model using fruits data
+experiment_name: fruits_training_exp
+
 
 
 # environment:
 #   name: training-environment
 #   conda_file: ./conda_dependencies.yml
 #   image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04
-
-compute: compute-cluster-cli01
-
-code: ../
-description: Train a model using fruits data
-experiment_name: fruits_training_experiment

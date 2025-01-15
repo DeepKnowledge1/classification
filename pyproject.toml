@@ -21,6 +21,7 @@ azure-identity = "^1.19.0"
 azure-mgmt-resource = "^23.2.0"
 azure-storage-blob = "^12.24.0"
 azure-mgmt-storage = "^21.2.1"
+mlflow = "^2.19.0"
 
 
 [build-system]

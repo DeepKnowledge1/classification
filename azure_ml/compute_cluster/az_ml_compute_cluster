@@ -1,0 +1,108 @@
+import argparse
+from azure.ai.ml import MLClient
+from azure.ai.ml.entities import AmlCompute
+from azure.identity import DefaultAzureCredential
+
+
+def create_compute_cluster(
+    subscription_id, resource_group, workspace_name, cluster_name, vm_size, min_nodes, max_nodes, idle_time
+):
+    """
+    Create a Compute Cluster in Azure ML workspace.
+
+    Args:
+        subscription_id (str): Azure Subscription ID.
+        resource_group (str): Azure Resource Group Name.
+        workspace_name (str): Azure ML Workspace Name.
+        cluster_name (str): Name of the Compute Cluster.
+        vm_size (str): VM size for the Compute Cluster (e.g., Standard_DS11_v2).
+        min_nodes (int): Minimum number of nodes in the cluster.
+        max_nodes (int): Maximum number of nodes in the cluster.
+        idle_time (int): Idle time (in seconds) before nodes scale down.
+    """
+    try:
+        # Initialize MLClient
+        ml_client = MLClient(
+            DefaultAzureCredential(), subscription_id, resource_group, workspace_name
+        )
+
+        # Create Compute Cluster configuration
+        compute_cluster = AmlCompute(
+            name=cluster_name,
+            size=vm_size,
+            min_instances=min_nodes,
+            max_instances=max_nodes,
+            idle_time_before_scale_down=idle_time,
+        )
+
+        # Create or update Compute Cluster
+        ml_client.compute.begin_create_or_update(compute_cluster).result()
+        print(f"Compute cluster '{cluster_name}' created successfully.")
+
+    except Exception as e:
+        print(f"Failed to create compute cluster: {e}")
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Create a Compute Cluster in Azure ML using SDK v2."
+    )
+    parser.add_argument(
+        "--subscription_id", required=True, help="Azure Subscription ID"
+    )
+    parser.add_argument(
+        "--resource_group", required=True, help="Azure Resource Group Name"
+    )
+    parser.add_argument(
+        "--workspace_name", required=True, help="Azure ML Workspace Name"
+    )
+    parser.add_argument(
+        "--cluster_name",
+        default="compute-cluster-demo",
+        help="Name of the Compute Cluster",
+    )
+    parser.add_argument(
+        "--vm_size", default="Standard_DS3_v2", help="VM size for the Compute Cluster"
+    )
+    parser.add_argument(
+        "--min_nodes", type=int, default=0, help="Minimum number of nodes in the cluster"
+    )
+    parser.add_argument(
+        "--max_nodes", type=int, default=4, help="Maximum number of nodes in the cluster"
+    )
+    parser.add_argument(
+        "--idle_time",
+        type=int,
+        default=120,
+        help="Idle time (in seconds) before nodes scale down",
+    )
+
+    args = parser.parse_args()
+
+    # Create Compute Cluster
+    create_compute_cluster(
+        args.subscription_id,
+        args.resource_group,
+        args.workspace_name,
+        args.cluster_name,
+        args.vm_size,
+        args.min_nodes,
+        args.max_nodes,
+        args.idle_time,
+    )
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+# python azure_ml\compute_cluster\az_ml_compute_cluster `
+#     --subscription_id "5eab4ecc-5ecf-4754-802d-6da984293b70" `
+#     --resource_group "rg_demo03" `
+#     --workspace_name "ws_demo_pipeline03" `
+#     --cluster_name "compute-cluster-py01" `
+#     --vm_size "Standard_DS3_v2" `
+#     --min_nodes 0 `
+#     --max_nodes 4 `
+#     --idle_time 120

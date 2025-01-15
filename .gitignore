@@ -169,3 +169,5 @@ cython_debug/
 outputs
 local-output/named-outputs/output_dir/Fruit_model.pkl
 local-output/named-outputs/output_dir/metrics.json
+mlruns/
+results
