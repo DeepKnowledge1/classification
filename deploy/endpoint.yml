@@ -1,0 +1,7 @@
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineEndpoint.schema.json
+name: fruit-endpoint
+auth_mode: key
+
+
+
+# az ml online-endpoint create --file ./deploy/endpoint.yml --resource-group rg_demo03 --workspace-name ws_demo_pipeline03

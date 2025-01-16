@@ -171,3 +171,4 @@ local-output/named-outputs/output_dir/Fruit_model.pkl
 local-output/named-outputs/output_dir/metrics.json
 mlruns/
 results
+data/Date_Fruit_Datasets_small.csv
