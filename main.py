@@ -71,6 +71,15 @@ class TrainingPipeline:
             # Split data
             splitter = DataSplitter()
             data = splitter.split(df)
+            unique_labels = data[2].tolist()
+            # Save the unique labels to a JSON file
+            unique_labels_json = {"unique_labels": unique_labels}
+            jsonfile = os.path.join(self.output_dir, "unique_labels.json")
+            with open(jsonfile, "w") as f:
+                json.dump(unique_labels_json, f)
+
+            # Log the JSON file as an artifact
+            mlflow.log_artifact(jsonfile)
 
             # Train model
             trainer = ModelTrainer(parameters=self.parameters)
@@ -150,3 +159,9 @@ if __name__ == "__main__":
         model_output=args.model_output,
     )
     pipeline.run()
+
+# Usage vis CLI v2
+# az ml job create `
+#    --file "./yml_files/job.yaml" `
+#    --resource-group "rg_demo03" `
+#    --workspace-name "ws_demo_pipeline03" `

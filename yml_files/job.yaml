@@ -19,10 +19,12 @@ outputs:
     path: azureml://datastores/datastorefruits/paths/models/Fruit_model/
 
 environment: azureml://registries/azureml/environments/lightgbm-3.3/versions/53  # Using a curated environment
+
 compute: compute-cluster-cli01
+
 code: ../
 description: Train a model using fruits data
-experiment_name: fruits_training_exp
+experiment_name: fruits_training_exps
 
 
 
