@@ -1,0 +1,19 @@
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
+name: multi-cls
+endpoint_name: fruit-endpoint
+model: azureml:Fruit_FINAL_model:6
+code_configuration:
+  code: .
+  scoring_script: score.py
+environment: azureml://registries/azureml/environments/lightgbm-3.3/versions/53
+instance_type: Standard_F2s_v2
+instance_count: 1
+
+# az ml online-deployment create --file azure_ml/deploy_model/deployment.yml --resource-group rg_demo03 --workspace-name ws_demo_pipeline03
+
+# az ml online-endpoint update --name fruit-endpoint --traffic "multi-cls=100" -g rg_demo03 -w ws_demo_pipeline03
+# az ml online-deployment delete --name blue --endpoint-name fruit-endpoint --resource-group rg_demo03 --workspace-name ws_demo_pipeline03 --yes
+
+
+
+# az ml online-endpoint update --name fruit-endpoint --traffic "multi-cls=0" -g rg_demo03 -w ws_demo_pipeline03

@@ -1,0 +1,8 @@
+pandas
+numpy
+scikit-learn
+lightgbm
+mlflow
+joblib
+pyyaml
+azure-ml
