@@ -19,6 +19,7 @@ more-itertools = "10.3.0"
 pandas = "1.5.3"
 scikit-learn = "1.5.2"
 zstandard = "0.23.0"
+scipy = "1.11.4"  # Using an older version that has pre-built wheels for Windows
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"
