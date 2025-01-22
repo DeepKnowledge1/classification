@@ -53,9 +53,21 @@ az ml online-endpoint create `
 
 ```bash
 az ml online-deployment create `
-    --file ./azure_ml/deploy_model//deployment.yml `
+    --file ./azure_ml/deploy_model/deployment.yml `
     --resource-group rg_demo03 `
     --workspace-name ws_demo_pipeline03
+```
+
+```bash
+
+### 2.2 Deploy the Model
+
+az ml online-endpoint update `
+    --name fruit-endpoint `
+    --traffic "multi-cls=100" `
+    --resource-group rg_demo03 `
+    --workspace-name ws_demo_pipeline03 `
+    --no-wait
 ```
 
 ### 3. Check Deployment Logs
